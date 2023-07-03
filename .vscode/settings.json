@@ -1,0 +1,13 @@
+{
+  "[c]": {
+    "editor.formatOnType": true
+  },
+  "cmake.buildTask": false,
+  "cmake.configureEnvironment": {
+    "CMAKE_JS_INC": "${userHome}/.cmake-js/node-arm64/v18.16.1/include/node"
+  },
+  "jest.nodeEnv": {
+    "NODE_ENV": "development"
+  },
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+}
