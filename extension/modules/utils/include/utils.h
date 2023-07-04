@@ -48,13 +48,9 @@
   }
 
 #define MODULE_EXPORT(fun, block)           \
-void                                        \
+static void                                 \
 fun(napi_env env, napi_value exports) block
 
-/*#define MODULE_EXPORT_CODE(fun, arg)          \
-void                                          \
-fun(napi_env env, napi_value exports) arg
-*/
 #define KEY "key"
 #define VALUE "value"
 
@@ -64,32 +60,54 @@ fun(napi_env env, napi_value exports) arg
 #define __NAPI_CALL_ERROR_RETURN_2 return
 #define VOID_ON_FAIL 2
 
-#define NAPI_CALL(env, ret, call)                                 \
-  {                                                               \
-    napi_status status = (call);                                  \
-    if (status != napi_ok)                                        \
-    {                                                             \
-      const napi_extended_error_info *error_info = NULL;          \
-      napi_get_last_error_info((env), &error_info);               \
-      bool is_pending;                                            \
-      napi_is_exception_pending((env), &is_pending);              \
-      if (!is_pending)                                            \
-      {                                                           \
-        const char *message = (error_info->error_message == NULL) \
-                                  ? "empty error message"         \
-                                  : error_info->error_message;    \
-        napi_throw_error((env), NULL, message);                   \
-        __NAPI_CALL_ERROR_RETURN(ret);                            \
-      }                                                           \
-    }                                                             \
+#define NAPI_CALL_OUT(ret, call)                                           \
+  {                                                                        \
+    status = (call);                                                       \
+    if (status != napi_ok)                                                 \
+    {                                                                      \
+      const napi_extended_error_info *error_info = NULL;                   \
+      status = napi_get_last_error_info((env), &error_info);               \
+      bool is_pending;                                                     \
+      status = napi_is_exception_pending((env), &is_pending);              \
+      if (!is_pending)                                                     \
+      {                                                                    \
+        status = napi_throw_error((env), NULL, error_info->error_message); \
+        __NAPI_CALL_ERROR_RETURN(ret);                                     \
+      }                                                                    \
+    }                                                                      \
   }
 
-#define CHECK_ARGC(expected, msg)                \
-  if (argc < expected)                           \
-  {                                              \
-    NAPI_CALL(env, false,                        \
-              napi_throw_error(env, NULL, msg)); \
-    return NULL;                                 \
+#define NAPI_CALL(ret, call)                                               \
+  {                                                                        \
+    status = (call);                                                       \
+    if (status != napi_ok) {                                               \
+      const napi_extended_error_info *error_info = NULL;                   \
+      status = napi_get_last_error_info((env), &error_info);               \
+      status = napi_throw_error((env), NULL, error_info->error_message);   \
+      __NAPI_CALL_ERROR_RETURN(ret);                                       \
+    }                                                                      \
+  }
+
+#define CHECK_ARGC(expected)                                               \
+  if (argc < expected)                                                     \
+  {                                                                        \
+    NAPI_CALL(env, false,                                                  \
+      napi_throw_error(env, NULL, "Too few arguments."));                  \
+    return NULL;                                                           \
+  }
+
+#define STATUS register napi_status status
+
+#define PROLOG(expected)                                                       \
+  STATUS;                                                                      \
+  size_t argc = expected;                                                      \
+  napi_value es_this, argv[argc];                                              \
+  void *data = NULL;                                                           \
+  NAPI_CALL(false,                                                             \
+    napi_get_cb_info(env, cb_info, &argc, argv, &es_this, &data));             \
+  if (argc < expected) {                                                       \
+    NAPI_CALL(false, napi_throw_error(env, "EINVAL", "Too few arguments."));       \
+    return NULL;                                                               \
   }
 
 /**

@@ -1,10 +1,10 @@
 include_directories(include)
-link_libraries(utils)
 
-add_library(test OBJECT test.c)
-add_library(exports OBJECT exports.c)
+add_library(es_parser OBJECT es_parser.c)
+target_link_libraries(es_parser
+	parse_thread)
 
-
-message(STATUS "	Configured N-API module: " ${NAPI_MODULE})
 add_napi_module(${NAPI_MODULE})
-target_link_libraries(${NAPI_MODULE} exports)
+
+target_link_libraries(${NAPI_MODULE}
+	es_parser)

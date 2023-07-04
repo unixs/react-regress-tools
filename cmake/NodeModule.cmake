@@ -1,4 +1,6 @@
 function(add_napi_module name)
+	message(STATUS "	Configured N-API module: " ${name})
+
 	add_library(${name}
 		SHARED
 		module.c)
@@ -9,5 +11,6 @@ function(add_napi_module name)
 		PREFIX ""
 		SUFFIX ".node")
 
-	target_link_libraries(${name} utils)
+	target_link_libraries(${name}
+		utils)
 endfunction()

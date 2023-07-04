@@ -12,8 +12,9 @@ static pthread_t parser_thread;
 
 static void *
 parse_fn(void * data) {
+
   printf("Parse thread is running.\n");
-  sleep(3);
+  sleep(1);
 
   return NULL;
 }

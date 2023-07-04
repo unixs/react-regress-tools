@@ -4,6 +4,8 @@
   "description": "React regress tool for testing",
   "main": "lib/index",
   "scripts": {
+    "install": "cmake-js compile",
+    "build-debug": "cmake-js clean && cmake-js -D",
     "lint": "eslint .",
     "test": "jest --no-cache --runInBand"
   },

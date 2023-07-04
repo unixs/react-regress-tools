@@ -8,6 +8,5 @@
   },
   "jest.nodeEnv": {
     "NODE_ENV": "development"
-  },
-  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+  }
 }

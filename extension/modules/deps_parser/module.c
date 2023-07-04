@@ -1,10 +1,23 @@
-#include <exports.h>
+#include <utils.h>
+#include <es_parser.h>
+
+MODULE_EXPORT(parser_exports, {
+  STATUS;
+  napi_value parser;
+
+  NAPI_CALL(false,
+    napi_create_function(env, NULL, NAPI_AUTO_LENGTH, es_parser, NULL, &parser));
+
+  NAPI_CALL(false,
+    napi_set_named_property(env, exports, "parser", parser));
+})
 
 NAPI_MODULE_INIT() {
-  test_exports(env, exports);
-  // parse_exports(env, exports);
+  STATUS;
 
-  NAPI_CALL(env, false,
+  parser_exports(env, exports);
+
+  NAPI_CALL(false,
     napi_object_freeze(env, exports));
 
   return exports;

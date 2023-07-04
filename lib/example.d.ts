@@ -1,5 +1,5 @@
 declare const mod: {
-  parser: (arg: string) => Promise<string>
+  example: number,
 };
 
 export default mod;
