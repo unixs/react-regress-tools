@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+          "name": "Mac",
+          "defines": [],
+          "compilerPath": "/usr/bin/clang",
+          "cStandard": "c11",
+          "cppStandard": "c++17",
+          "compilerArgs": [
+              "-O0",
+              "-Wall",
+              "-Wextra",
+              "-std=C11"
+          ],
+          "intelliSenseMode": "macos-clang-arm64",
+          "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
