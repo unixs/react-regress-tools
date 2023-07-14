@@ -10,7 +10,7 @@ if(APPLE)
   	add_link_options(-undefined dynamic_lookup)
 endif()
 
-set(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb3 -Wall -Wextra -Wno-unused-parameter")
+set(CMAKE_C_FLAGS_DEBUG "-Og -ggdb3 -Wall -Wextra -Wno-unused-parameter")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
