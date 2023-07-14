@@ -1,7 +1,9 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
+#include <stdlib.h>
 #include <node_api.h>
+#include <glib.h>
 
 #define DEF_METHOD(name, func) { \
     name,                   \
@@ -74,15 +76,46 @@ fun(napi_env env, napi_value exports) block
     }                                                                      \
   }
 
-#define NAPI_CALL(call)                                                    \
-  {                                                                        \
-    status = (call);                                                       \
-    if (status != napi_ok) {                                               \
-      const napi_extended_error_info *error_info = NULL;                   \
-      napi_status st = napi_get_last_error_info((env), &error_info);       \
-      st = napi_throw_error((env), NULL, error_info->error_message);       \
-    }                                                                      \
+#define NAPI_CALL_DEBUG(call)                                                  \
+  {                                                                            \
+    status = (call);                                                           \
+    g_debug("NAPI_CALL: %s => %d", #call, status);                             \
+    if (status != napi_ok) {                                                   \
+      napi_status call_status = status;                                        \
+      g_debug("\t!NAPI_CALL_FAILED: %s", #call);                               \
+      const napi_extended_error_info *error_info = NULL;                       \
+      status = napi_get_last_error_info((env), &error_info);                   \
+      g_debug("\t!NAPI_GET_ERROR_INFO: %s => %d",                              \
+              "napi_get_last_error_info((env), &error_info)", status);         \
+      g_debug("\t!NAPI_ERROR_CODE: %d, MSG: %s",                               \
+              error_info->engine_error_code, error_info->error_message);       \
+      status = napi_throw_error((env), NULL, error_info->error_message);       \
+      g_debug("\t!NAPI_THROW_ERROR: %s => %d",                                 \
+              "napi_throw_error((env), NULL, error_info->error_message)",      \
+              status);                                                         \
+      status = call_status;                                                    \
+    }                                                                          \
   }
+
+#define NAPI_CALL(call)                                                        \
+  {                                                                            \
+    status = (call);                                                           \
+    if (status != napi_ok) {                                                   \
+      napi_status call_status = status;                                        \
+      g_debug("\t!NAPI_CALL_FAILED: %s", #call);                               \
+      const napi_extended_error_info *error_info = NULL;                       \
+      status = napi_get_last_error_info((env), &error_info);                   \
+      g_debug("\t!NAPI_ERROR_CODE: %d, MSG: %s",                               \
+              error_info->engine_error_code, error_info->error_message);       \
+      status = napi_throw_error((env), NULL, error_info->error_message);       \
+      status = call_status;                                                    \
+    }                                                                          \
+  }
+
+#ifdef DEBUG_BUILD
+  #undef NAPI_CALL
+  #define NAPI_CALL(call) NAPI_CALL_DEBUG(call)
+#endif
 
 #define CHECK_ARGC(expected)                                               \
   if (argc < expected) {                                                   \
