@@ -7,7 +7,7 @@ esUndef(napi_env env) {
   STATUS;
   napi_value esUndef;
 
-  NAPI_CALL(false, napi_get_undefined(env, &esUndef));
+  NAPI_CALL(napi_get_undefined(env, &esUndef));
 
   return esUndef;
 }
@@ -17,7 +17,7 @@ esNull(napi_env env) {
   STATUS;
   napi_value esNull;
 
-  NAPI_CALL(false, napi_get_null(env, &esNull));
+  NAPI_CALL(napi_get_null(env, &esNull));
 
   return esNull;
 }
@@ -27,7 +27,7 @@ esGlobal(napi_env env) {
   STATUS;
   napi_value result;
 
-  NAPI_CALL(true,
+  NAPI_CALL(
     napi_get_global(env, &result));
 
   return result;

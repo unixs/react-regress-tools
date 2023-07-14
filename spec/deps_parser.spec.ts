@@ -11,7 +11,12 @@ describe('deps parser', () => {
   });
 
   it('return promise', async () => {
-    const result = parser.parser("test")
-    expect(await result).toBe("test");
-  }, 2000)
+    const result = parser.parser({ str: "bbb" })
+    expect(result.constructor.name).toBe("Promise");
+  })
+
+  it('return promise resolved with expected value', async () => {
+    const result = parser.parser({ str: "bbb" })
+    expect(await result).toBe("bbb");
+  })
 });

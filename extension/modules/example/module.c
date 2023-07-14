@@ -4,10 +4,10 @@ MODULE_EXPORT(example_exports, {
   STATUS;
   napi_value example;
 
-  NAPI_CALL(false,
+  NAPI_CALL(
     napi_create_int64(env, 42, &example));
 
-  NAPI_CALL(false,
+  NAPI_CALL(
     napi_set_named_property(env, exports, "example", example));
 })
 
@@ -16,7 +16,7 @@ NAPI_MODULE_INIT() {
 
   example_exports(env, exports);
 
-  NAPI_CALL(false,
+  NAPI_CALL(
     napi_object_freeze(env, exports));
 
   return exports;

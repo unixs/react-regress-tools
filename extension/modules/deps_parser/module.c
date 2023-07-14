@@ -5,10 +5,10 @@ MODULE_EXPORT(parser_exports, {
   STATUS;
   napi_value parser;
 
-  NAPI_CALL(false,
+  NAPI_CALL(
     napi_create_function(env, NULL, NAPI_AUTO_LENGTH, es_parser, NULL, &parser));
 
-  NAPI_CALL(false,
+  NAPI_CALL(
     napi_set_named_property(env, exports, "parser", parser));
 })
 
@@ -17,7 +17,7 @@ NAPI_MODULE_INIT() {
 
   parser_exports(env, exports);
 
-  NAPI_CALL(false,
+  NAPI_CALL(
     napi_object_freeze(env, exports));
 
   return exports;

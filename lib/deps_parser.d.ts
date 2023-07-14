@@ -1,5 +1,9 @@
+export interface IParserPayload {
+  str: string;
+}
+
 declare const mod: {
-  parser: (arg: string) => Promise<string>
+  parser: (arg: IParserPayload) => Promise<string>
 };
 
 export default mod;

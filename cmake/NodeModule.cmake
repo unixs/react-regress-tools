@@ -7,7 +7,7 @@ function(add_napi_module name)
 
 	set_target_properties(${name}
 		PROPERTIES
-		OUTPUT_NAME ${name}-${CMAKE_SYSTEM_PROCESSOR}
+		OUTPUT_NAME ${name}-${CMAKE_SYSTEM_PROCESSOR}-${CMAKE_BUILD_TYPE}
 		PREFIX ""
 		SUFFIX ".node")
 

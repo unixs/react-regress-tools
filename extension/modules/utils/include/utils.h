@@ -63,34 +63,29 @@ fun(napi_env env, napi_value exports) block
 #define NAPI_CALL_OUT(ret, call)                                           \
   {                                                                        \
     status = (call);                                                       \
-    if (status != napi_ok)                                                 \
-    {                                                                      \
+    if (status != napi_ok) {                                               \
       const napi_extended_error_info *error_info = NULL;                   \
-      status = napi_get_last_error_info((env), &error_info);               \
+      napi_value st = napi_get_last_error_info((env), &error_info);        \
       bool is_pending;                                                     \
-      status = napi_is_exception_pending((env), &is_pending);              \
-      if (!is_pending)                                                     \
-      {                                                                    \
-        status = napi_throw_error((env), NULL, error_info->error_message); \
-        __NAPI_CALL_ERROR_RETURN(ret);                                     \
+      st = napi_is_exception_pending((env), &is_pending);                  \
+      if (!is_pending) {                                                   \
+        st = napi_throw_error((env), NULL, error_info->error_message);     \
       }                                                                    \
     }                                                                      \
   }
 
-#define NAPI_CALL(ret, call)                                               \
+#define NAPI_CALL(call)                                                    \
   {                                                                        \
     status = (call);                                                       \
     if (status != napi_ok) {                                               \
       const napi_extended_error_info *error_info = NULL;                   \
-      status = napi_get_last_error_info((env), &error_info);               \
-      status = napi_throw_error((env), NULL, error_info->error_message);   \
-      __NAPI_CALL_ERROR_RETURN(ret);                                       \
+      napi_status st = napi_get_last_error_info((env), &error_info);       \
+      st = napi_throw_error((env), NULL, error_info->error_message);       \
     }                                                                      \
   }
 
 #define CHECK_ARGC(expected)                                               \
-  if (argc < expected)                                                     \
-  {                                                                        \
+  if (argc < expected) {                                                   \
     NAPI_CALL(env, false,                                                  \
       napi_throw_error(env, NULL, "Too few arguments."));                  \
     return NULL;                                                           \
@@ -103,10 +98,10 @@ fun(napi_env env, napi_value exports) block
   size_t argc = expected;                                                      \
   napi_value es_this, argv[argc];                                              \
   void *data = NULL;                                                           \
-  NAPI_CALL(false,                                                             \
+  NAPI_CALL(                                                                   \
     napi_get_cb_info(env, cb_info, &argc, argv, &es_this, &data));             \
   if (argc < expected) {                                                       \
-    NAPI_CALL(false, napi_throw_error(env, "EINVAL", "Too few arguments."));       \
+    NAPI_CALL(napi_throw_error(env, "EINVAL", "Too few arguments."));          \
     return NULL;                                                               \
   }
 
@@ -133,5 +128,19 @@ esNull(napi_env env);
 
 napi_value
 esGlobal(napi_env env);
+
+inline bool
+get_ref_value(napi_env env, napi_ref ref, napi_value *value) {
+  STATUS;
+
+  NAPI_CALL(
+    napi_get_reference_value(env, ref, value));
+
+  if (*value == NULL) {
+    return false;
+  }
+
+  return true;
+}
 
 #endif // _UTILS_H_

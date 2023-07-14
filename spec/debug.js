@@ -1,5 +1,6 @@
 const parser = require("../lib/deps_parser");
 
-parser.parser("test").then((val) => {
+const str = String("test");
+parser.parser(str, {}).then((val) => {
   console.log(val);
 });
