@@ -1,6 +1,5 @@
 #include <assert.h>
 
-#include <unistd.h>
 #include <es_parser.h>
 #include <parse_thread.h>
 
@@ -24,16 +23,20 @@ async_native_js_call(napi_env env, napi_value js_callback, gpointer context, gpo
 
   TsfnPayload_t *tsfn_data = (TsfnPayload_t *) data;
 
-  napi_value result;
-  get_ref_value(env, tsfn_data->payload, &result);
+  if (env != NULL) {
+    napi_value result;
 
-  NAPI_CALL(
-    napi_delete_reference(env, tsfn_data->payload));
+    get_ref_value(env, tsfn_data->payload, &result);
 
-  NAPI_CALL(
-    napi_get_named_property(env, result, "str", &result));
+    NAPI_CALL(
+      napi_delete_reference(env, tsfn_data->payload));
 
-  NAPI_CALL(napi_resolve_deferred(env, tsfn_data->deferred, result));
+    NAPI_CALL(
+      napi_get_named_property(env, result, "str", &result));
+
+    NAPI_CALL(
+      napi_resolve_deferred(env, tsfn_data->deferred, result));
+  }
 
   g_free(tsfn_data);
 }
