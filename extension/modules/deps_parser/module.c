@@ -4,12 +4,19 @@
 MODULE_EXPORT(parser_exports, {
   STATUS;
   napi_value parser;
+  napi_value pthread_parser;
 
   NAPI_CALL(
     napi_create_function(env, NULL, NAPI_AUTO_LENGTH, es_parser, NULL, &parser));
 
   NAPI_CALL(
+    napi_create_function(env, NULL, NAPI_AUTO_LENGTH, es_pthread_parser, NULL, &pthread_parser));
+
+  NAPI_CALL(
     napi_set_named_property(env, exports, "parser", parser));
+
+  NAPI_CALL(
+    napi_set_named_property(env, exports, "pthread_parser", pthread_parser));
 })
 
 NAPI_MODULE_INIT() {
