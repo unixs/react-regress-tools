@@ -79,10 +79,10 @@ fun(napi_env env, napi_value exports) block
 #define NAPI_CALL_DEBUG(call)                                                  \
   {                                                                            \
     status = (call);                                                           \
-    g_debug("NAPI_CALL: %s => %d", #call, status);                             \
+    g_debug("NAPI_CALL: %s => %s => %d", __FUNCTION__, #call, status);         \
     if (status != napi_ok) {                                                   \
       napi_status call_status = status;                                        \
-      g_debug("\t!NAPI_CALL_FAILED: %s", #call);                               \
+      g_debug("\t!NAPI_CALL_FAILED in %s: %s", __FUNCTION__, #call);           \
       const napi_extended_error_info *error_info = NULL;                       \
       status = napi_get_last_error_info((env), &error_info);                   \
       g_debug("\t!NAPI_GET_ERROR_INFO: %s => %d",                              \
@@ -102,7 +102,7 @@ fun(napi_env env, napi_value exports) block
     status = (call);                                                           \
     if (status != napi_ok) {                                                   \
       napi_status call_status = status;                                        \
-      g_debug("\t!NAPI_CALL_FAILED: %s", #call);                               \
+      g_debug("\t!NAPI_CALL_FAILED in %s: %s", __FUNCTION__, #call);           \
       const napi_extended_error_info *error_info = NULL;                       \
       status = napi_get_last_error_info((env), &error_info);                   \
       g_debug("\t!NAPI_ERROR_CODE: %d, MSG: %s",                               \
@@ -162,7 +162,7 @@ esNull(napi_env env);
 napi_value
 esGlobal(napi_env env);
 
-inline bool
+static inline bool
 get_ref_value(napi_env env, napi_ref ref, napi_value *value) {
   STATUS;
 
