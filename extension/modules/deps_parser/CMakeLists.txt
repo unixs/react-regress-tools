@@ -1,15 +1,22 @@
 include_directories(include)
 
-add_library(es_parser OBJECT es_parser.c)
-target_link_libraries(es_parser
-	parse_thread)
+link_libraries(parse_thread)
 
-add_library(es_pthread_parser OBJECT es_pthread_parser.c)
-target_link_libraries(es_pthread_parser
-	parse_thread)
+set(NAPI_MODULE_EXPORTS
+	parser
+	pthread_parser)
+
+set(NAPI_MODULE_LINKS)
+
+foreach(item IN LISTS NAPI_MODULE_EXPORTS)
+	add_library(es_${item} OBJECT es_${item}.c)
+	list(APPEND NAPI_MODULE_LINKS es_${item})
+endforeach()
 
 add_napi_module(${NAPI_MODULE})
 
 target_link_libraries(${NAPI_MODULE}
-	es_parser
-	es_pthread_parser)
+	${NAPI_MODULE_LINKS})
+
+list(JOIN NAPI_MODULE_EXPORTS ", " NAPI_MODULE_EXPORTS_LIST)
+message(STATUS "\t\tExports: " ${NAPI_MODULE_EXPORTS_LIST})

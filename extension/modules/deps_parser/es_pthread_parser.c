@@ -4,24 +4,25 @@
 #include <parse_thread.h>
 
 typedef struct {
-  napi_async_work work;
   napi_threadsafe_function tsfn;
   napi_deferred deferred;
   napi_ref payload;
 } AsyncWorkParserData_t;
 
-
+/*
 typedef struct {
   napi_deferred deferred;
   napi_ref payload;
 } TsfnPayload_t;
-
+*/
 
 static void
-async_native_js_call(napi_env env, napi_value js_callback, gpointer context, gpointer data) {
+async_native_js_call( napi_env env, napi_value js_callback, gpointer context,
+  gpointer data) {
+
   STATUS;
 
-  TsfnPayload_t *tsfn_data = (TsfnPayload_t *) data;
+  AsyncWorkParserData_t *tsfn_data = (AsyncWorkParserData_t *) data;
 
   if (env != NULL) {
     napi_value result;
@@ -39,6 +40,11 @@ async_native_js_call(napi_env env, napi_value js_callback, gpointer context, gpo
   }
 
   g_free(tsfn_data);
+}
+
+static void
+async_work_complete(gpointer data) {
+
 }
 
 static void
@@ -64,19 +70,6 @@ async_work_exec(napi_env env, gpointer data) {
 
   assert(napi_release_threadsafe_function(arg->tsfn, napi_tsfn_release)
     == napi_ok);
-}
-
-static void
-async_work_complete(napi_env env, napi_status status, gpointer data) {
-  AsyncWorkParserData_t *arg = (AsyncWorkParserData_t *) data;
-
-  NAPI_CALL(
-    napi_release_threadsafe_function(arg->tsfn, napi_tsfn_release));
-
-  NAPI_CALL(
-    napi_delete_async_work(env, arg->work));
-
-  g_free(data);
 }
 
 static void
@@ -106,16 +99,10 @@ process_async(napi_env env, napi_value payload, napi_deferred deferred) {
       &data->tsfn
     ));
 
-  NAPI_CALL(
-    napi_create_async_work(env, NULL, work_name,
-      async_work_exec,
-      async_work_complete,
-      (gpointer) data,
-      &data->work
-    ));
+
 
   NAPI_CALL(
-    napi_queue_async_work(env, data->work));
+    napi_release_threadsafe_function(data->tsfn, napi_tsfn_release));
 }
 
 napi_value
