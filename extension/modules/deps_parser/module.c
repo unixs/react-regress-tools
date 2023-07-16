@@ -1,9 +1,6 @@
 #include <utils.h>
 #include <es_parser.h>
 
-static const char* mod_exports[] = { NAPI_MODULE_C_EXPORTS };
-
-
 MODULE_EXPORT(parser_exports, {
   STATUS;
   napi_value parser;

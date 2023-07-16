@@ -1,5 +1,7 @@
+#include <glib.h>
+
 void
 parse_thread();
 
-void
-parse_thread_2();
+int
+parse_thread_2(GArray *payload);
